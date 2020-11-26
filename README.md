@@ -1,1 +1,1 @@
-# Projet_Intelligence_Artificielle
+# Projet Intelligence Artificielle
