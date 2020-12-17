@@ -83,19 +83,22 @@ for dataset in noms_dataset:
         data = pd.read_csv(Path(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
 
         #Calcul du rendement
+        valeur_close = []
+        gain = []
         rendement = []
         rentabilite = []
 
         for i in range(data["Close"].size - 1):
-            gain = data["Close"].values[i + 1] - data["Close"].values[i]
+            valeur_close.append(data["Close"].values[i + 1])
+            gain.append(data["Close"].values[i + 1] - data["Close"].values[i])
             gain_adj = data["Adj_Close"].values[i + 1] - data["Adj_Close"].values[i]
             facteur = data["Adj_Close"].values[i + 1] / (SPLIT_MULTIPLIER * data["Close"].values[i + 1])
-            dividende = (1 - facteur) * gain
+            dividende = (1 - facteur) * gain[i]
             rendement.append((dividende/data["Close"].values[i + 1])/data["Close"].values[i])
-            rentabilite.append(rendement[-1] + (gain/data["Close"].values[i]))
+            rentabilite.append(rendement[i] + (gain[i]/data["Close"].values[i]))
 
         index = data.index[1:]
-        data = {'Rendement': rendement, 'Rentabilite': rentabilite}
+        data = {'Valeurs': valeur_close, 'Gain': gain, 'Rendement': rendement, 'Rentabilite': rentabilite}
 
         dtframe = pd.DataFrame(data=data, index=index)
         dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
