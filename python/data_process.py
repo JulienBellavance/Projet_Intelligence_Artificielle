@@ -6,6 +6,7 @@ import pandas as pd
 import quandl
 import os
 from pathlib import Path
+import fnmatch
 
 
 DATE_DEBUT = "2017-12-31"
@@ -129,7 +130,21 @@ def classement_entrainement():
         
     return
 
+# generation du tableau commun
+def genere_tab_commun():
+    commun = pd.DataFrame(columns={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
+    for dataset in noms_dataset:
+        donnees = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0)
+        #commundf = pd.read_table(donnees, delim_whitespace=True,
+        #                         names={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
+        commun.append(donnees, ignore_index=False)
+    print(commun)
+    return
+
+
 if __name__ == "__main__":
     valider_paths()
     telecharger_donnees(None, None, training=True)
     data_processing(None, training=True)
+    genere_tab_commun()
+
