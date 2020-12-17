@@ -37,6 +37,7 @@ quandl.ApiConfig.api_key = CLE_QUANDL
 """
 Sélection des données à récupérer
 """
+
 noms_dataset = ["Apple QuoteMedia End of Day US Prices",
                 "Microsoft QuoteMedia End of Day US Prices",
                 "Intel QuoteMedia End of Day US Prices",
@@ -74,6 +75,7 @@ for dataset in noms_dataset:
         data = pd.read_csv(Path(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
 
         #Calcul du rendement
+        rendement = []
         rentabilite = []
 
         for i in range(data["Close"].size - 1):
@@ -81,11 +83,11 @@ for dataset in noms_dataset:
             gain_adj = data["Adj_Close"].values[i + 1] - data["Adj_Close"].values[i]
             facteur = data["Adj_Close"].values[i + 1] / (SPLIT_MULTIPLIER * data["Close"].values[i + 1])
             dividende = (1 - facteur) * gain
-            rendement = (dividende/data["Close"].values[i + 1])/data["Close"].values[i]
-            rentabilite.append(rendement + (gain/data["Close"].values[i]))
+            rendement.append((dividende/data["Close"].values[i + 1])/data["Close"].values[i])
+            rentabilite.append(rendement[-1] + (gain/data["Close"].values[i]))
 
         index = data.index[1:]
-        data = {'Rendement': rentabilite}
+        data = {'Rendement': rendement, 'Rentabilite': rentabilite}
 
         dtframe = pd.DataFrame(data=data, index=index)
-        dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + ".csv"))
+        dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
