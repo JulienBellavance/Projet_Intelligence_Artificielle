@@ -62,9 +62,15 @@ codes_dataset = ["EOD/AAPL",
                  "EOD/DIS"
                  ]
 
+if not Path("data").exists():
+    Path.mkdir(Path("data"))
+if not Path(RAW_DATA_PATH).exists():
+    Path.mkdir(Path(RAW_DATA_PATH))
+if not Path(PROCESSED_DATA_PATH).exists():
+    Path.mkdir(Path(PROCESSED_DATA_PATH))
+
 #téléchargement des données brutes
 for i in range(len(codes_dataset)):
-
     if not Path(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
         print("Téléchargement de " + RAW_DATA_PATH + noms_dataset[i])
         data = quandl.get(codes_dataset[i])
