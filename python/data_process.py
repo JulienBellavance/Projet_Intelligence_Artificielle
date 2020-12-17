@@ -4,7 +4,7 @@ Module dédié à la préparation des données
 import numpy as nd
 import pandas as pd
 import quandl
-from pathlib import Path
+from pathlib import Path, WindowsPath
 
 
 DATE_DEBUT = "2017-12-31"
@@ -63,16 +63,17 @@ codes_dataset = ["EOD/AAPL",
 
 #téléchargement des données brutes
 for i in range(len(codes_dataset)):
-    if not Path(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
+    if not WindowsPath(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
         print("Téléchargement de " + RAW_DATA_PATH + noms_dataset[i])
         data = quandl.get(codes_dataset[i])
-        data.to_csv(Path(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
+        chemin = data.to_csv(WindowsPath(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
+        print(WindowsPath(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
 
 
 #Pre-processing
 for dataset in noms_dataset:
-    if not Path(PROCESSED_DATA_PATH + dataset + ".csv").exists():
-        data = pd.read_csv(Path(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
+    if not WindowsPath(PROCESSED_DATA_PATH + dataset + ".csv").exists():
+        data = pd.read_csv(WindowsPath(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
 
         #Calcul du rendement
         rendement = []
@@ -90,4 +91,4 @@ for dataset in noms_dataset:
         data = {'Rendement': rendement, 'Rentabilite': rentabilite}
 
         dtframe = pd.DataFrame(data=data, index=index)
-        dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
+        dtframe.to_csv(WindowsPath(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
