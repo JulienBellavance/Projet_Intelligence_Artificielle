@@ -6,6 +6,7 @@ import pandas as pd
 import quandl
 import os
 from pathlib import Path
+import fnmatch
 
 
 DATE_DEBUT = "2017-12-31"
@@ -102,3 +103,11 @@ for dataset in noms_dataset:
 
         dtframe = pd.DataFrame(data=data, index=index)
         dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
+
+# generation du tableau commun
+commun = pd.DataFrame(columns={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
+for dataset in  noms_dataset:
+    donnees = open(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), 'r')
+    commundf = pd.read_table(donnees, delim_whitespace=True, names={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
+    commun.append(commundf, ignore_index=False)
+print(commun)
