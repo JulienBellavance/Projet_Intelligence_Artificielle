@@ -110,4 +110,4 @@ for dataset in  noms_dataset:
     donnees = open(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), 'r')
     commundf = pd.read_table(donnees, delim_whitespace=True, names={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
     commun.append(commundf, ignore_index=False)
-print(commun)
+print(commun) 
