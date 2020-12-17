@@ -47,3 +47,4 @@ for i in range(len(codes_dataset)):
         data = quandl.get(codes_dataset[i], returns="numpy")
         numpy.savetxt(Path(RAW_DATA_PATH + noms_dataset[i] + ".csv"), data, delimiter=',')
 
+l
