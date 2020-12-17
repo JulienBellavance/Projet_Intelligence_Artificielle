@@ -38,7 +38,7 @@ quandl.ApiConfig.api_key = CLE_QUANDL
 """
 Sélection des données à récupérer
 """
-
+#Datasets d'entrainement
 noms_dataset = ["Apple QuoteMedia End of Day US Prices",
                 "Microsoft QuoteMedia End of Day US Prices",
                 "Intel QuoteMedia End of Day US Prices",
@@ -62,43 +62,74 @@ codes_dataset = ["EOD/AAPL",
                  "EOD/DIS"
                  ]
 
-if not Path("data").exists():
-    Path.mkdir(Path("data"))
-if not Path(RAW_DATA_PATH).exists():
-    Path.mkdir(Path(RAW_DATA_PATH))
-if not Path(PROCESSED_DATA_PATH).exists():
-    Path.mkdir(Path(PROCESSED_DATA_PATH))
+#validation des dossiers de données
+def valider_paths():
+    if not Path("data").exists():
+        Path.mkdir(Path("data"))
+    if not Path(RAW_DATA_PATH).exists():
+        Path.mkdir(Path(RAW_DATA_PATH))
+    if not Path(PROCESSED_DATA_PATH).exists():
+        Path.mkdir(Path(PROCESSED_DATA_PATH))
+    return
 
 #téléchargement des données brutes
-for i in range(len(codes_dataset)):
-    if not Path(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
-        print("Téléchargement de " + RAW_DATA_PATH + noms_dataset[i])
-        data = quandl.get(codes_dataset[i])
-        chemin = data.to_csv(Path(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
+def telecharger_donnees(nom, code, training=False):
+    if training:
+        for i in range(len(codes_dataset)):
+            if not Path(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
+                print("Téléchargement de " + RAW_DATA_PATH + noms_dataset[i])
+                data = quandl.get(codes_dataset[i])
+                data.to_csv(Path(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
+        return
+
+    if not Path(RAW_DATA_PATH + nom + ".csv").exists():
+        print("Téléchargement de " + RAW_DATA_PATH + nom)
+        data = quandl.get(code)
+        data.to_csv(Path(RAW_DATA_PATH + nom + ".csv"))
+    return
 
 
 #Pre-processing
-for dataset in noms_dataset:
-    if not Path(PROCESSED_DATA_PATH + dataset + ".csv").exists():
-        data = pd.read_csv(Path(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
+def data_processing(_datasets, training=False):
+    if training: datasets = noms_dataset
+    else: datasets = _datasets
 
-        #Calcul du rendement
-        valeur_close = []
-        gain = []
-        rendement = []
-        rentabilite = []
+    for dataset in datasets:
+        if not Path(PROCESSED_DATA_PATH + dataset + ".csv").exists():
+            data = pd.read_csv(Path(RAW_DATA_PATH + dataset + ".csv"), index_col=0)
 
-        for i in range(data["Close"].size - 1):
-            valeur_close.append(data["Close"].values[i + 1])
-            gain.append(data["Close"].values[i + 1] - data["Close"].values[i])
-            gain_adj = data["Adj_Close"].values[i + 1] - data["Adj_Close"].values[i]
-            facteur = data["Adj_Close"].values[i + 1] / (SPLIT_MULTIPLIER * data["Close"].values[i + 1])
-            dividende = (1 - facteur) * gain[i]
-            rendement.append((dividende/data["Close"].values[i + 1])/data["Close"].values[i])
-            rentabilite.append(rendement[i] + (gain[i]/data["Close"].values[i]))
+            #Calcul du rendement
+            valeur_close = []
+            gain = []
+            rendement = []
+            rentabilite = []
 
-        index = data.index[1:]
-        data = {'Valeurs': valeur_close, 'Gain': gain, 'Rendement': rendement, 'Rentabilite': rentabilite}
+            for i in range(data["Close"].size - 1):
+                valeur_close.append(data["Close"].values[i + 1])
+                gain.append(data["Close"].values[i + 1] - data["Close"].values[i])
+                gain_adj = data["Adj_Close"].values[i + 1] - data["Adj_Close"].values[i]
+                facteur = data["Adj_Close"].values[i + 1] / (SPLIT_MULTIPLIER * data["Close"].values[i + 1])
+                dividende = (1 - facteur) * gain[i]
+                rendement.append((dividende/data["Close"].values[i + 1])/data["Close"].values[i])
+                rentabilite.append(rendement[i] + (gain[i]/data["Close"].values[i]))
 
-        dtframe = pd.DataFrame(data=data, index=index)
-        dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
+            index = data.index[1:]
+            data = {'Valeurs': valeur_close, 'Gain': gain, 'Rendement': rendement, 'Rentabilite': rentabilite}
+
+            dtframe = pd.DataFrame(data=data, index=index)
+            dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
+    return
+
+
+
+#Classement des données
+def classement_entrainement():
+    for dataset in noms_dataset:
+        data = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0)
+        
+    return
+
+if __name__ == "__main__":
+    valider_paths()
+    telecharger_donnees(None, None, training=True)
+    data_processing(None, training=True)
