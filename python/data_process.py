@@ -12,8 +12,8 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
 
 
-DATE_DEBUT = "2017-12-31"
-DATE_FIN = "2019-12-31"
+DATE_DEBUT = "2016-12-31"
+DATE_FIN = "2017-12-31"
 RAW_DATA_PATH = "data/raw/"
 PROCESSED_DATA_PATH = "data/processed/"
 SPLIT_MULTIPLIER = 0.5
