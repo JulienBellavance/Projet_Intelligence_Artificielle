@@ -148,15 +148,15 @@ def genere_tab_commun():
 def classement_initial():
     commun = genere_tab_commun()
     # classement initial
-    classe = []
-    liste_classe = []
+    liste_classe = nd.ndarray((10, 1089))
     for i in range(len(commun)):
+        #print(len(commun[i]["Rentabilite"]))
         for j in range(len(commun[i]["Rentabilite"])):
             if commun[i]["Rentabilite"][j]>0:
-                classe.append(1) #bon investissement
+                liste_classe[i][j] = 1 #bon investissement
             else:
-                classe.append(0) #mauvais investissement
-        liste_classe.append(classe)
+                liste_classe[i][j] = 0 #mauvais investissement
+        #print(len(classe) 
     #print(liste_classe)
     #print(len(liste_classe))
     #print(len(liste_classe[1]))
