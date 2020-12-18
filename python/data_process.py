@@ -166,12 +166,21 @@ classifieurs = [LinearRegression,
 def prediction():
     class_initial = classement_initial()
     commun = genere_tab_commun()
-    predictions = nd.zeros((len(classifieurs)))
+    rentabilite = nd.ndarray((10, 1089))
+    for i in range(len(commun)):
+        rentabilite[i] = commun[i]["Rentabilite"]
+    #print(rentabilite)
+    #predictions = nd.zeros((len(classifieurs)))
+    predictions = nd.ndarray((10, 1089))
     for classifiers in classifieurs:
-        clf = classifiers()
-        clf.fit(commun, class_initial)
-        predictions[str(classifiers)] = clf.predict(commun)
-    print(predictions)
+        for i in range(len(rentabilite)):
+            clf = SVR()
+            clf.fit(rentabilite[i].reshape(-1,1), class_initial[i])
+            #predictions[i] = clf.predict(rentabilite[i].reshape(-1,1))
+            predictions[i] = clf.predict(class_initial[i].reshape(-1, 1))
+    print("classement initial: {}".format(class_initial))
+    #print("rentabilite : {}".format(rentabilite))
+    print("prediction : {}".format(predictions))
     return
 
 if __name__ == "__main__":
