@@ -144,13 +144,8 @@ def genere_tab_commun():
     #print(commun[0]["Valeurs"][0])
     return commun
 
-
-
-
-if __name__ == "__main__":
-    valider_paths()
-    telecharger_donnees(None, None, training=True)
-    data_processing(None, training=True)
+# generation du classement initial
+def classement_initial():
     commun = genere_tab_commun()
     # classement initial
     classe = []
@@ -164,4 +159,13 @@ if __name__ == "__main__":
         liste_classe.append(classe)
     #print(liste_classe)
     #print(len(liste_classe))
+    return
+
+
+if __name__ == "__main__":
+    valider_paths()
+    telecharger_donnees(None, None, training=True)
+    data_processing(None, training=True)
+    genere_tab_commun()
+    classement_initial()
 
