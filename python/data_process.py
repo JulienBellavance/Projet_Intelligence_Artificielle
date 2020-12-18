@@ -4,7 +4,6 @@ Module dédié à la préparation des données
 import numpy as nd
 import pandas as pd
 import quandl
-import os
 from pathlib import Path
 import fnmatch
 
@@ -87,7 +86,6 @@ def telecharger_donnees(nom, code, training=False):
         print("Téléchargement de " + RAW_DATA_PATH + nom)
         data = quandl.get(code)
         data.to_csv(Path(RAW_DATA_PATH + nom + ".csv"))
-    return
 
 
 #Pre-processing
@@ -119,16 +117,7 @@ def data_processing(_datasets, training=False):
 
             dtframe = pd.DataFrame(data=data, index=index)
             dtframe.to_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"))
-    return
 
-
-
-#Classement des données
-def classement_entrainement():
-    for dataset in noms_dataset:
-        data = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0)
-        
-    return
 
 # generation du tableau commun
 def genere_tab_commun():
@@ -157,9 +146,7 @@ def classement_initial():
             else:
                 classe.append(0) #mauvais investissement
         liste_classe.append(classe)
-    #print(liste_classe)
-    #print(len(liste_classe))
-    return
+    return liste_classe
 
 
 if __name__ == "__main__":
