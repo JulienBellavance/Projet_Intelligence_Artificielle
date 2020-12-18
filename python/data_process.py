@@ -6,6 +6,10 @@ import pandas as pd
 import quandl
 from pathlib import Path
 import fnmatch
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import RandomForestRegressor
 
 
 DATE_DEBUT = "2017-12-31"
@@ -137,17 +141,38 @@ def genere_tab_commun():
 def classement_initial():
     commun = genere_tab_commun()
     # classement initial
-    classe = []
-    liste_classe = []
+    liste_classe = nd.ndarray((10, 1089))
     for i in range(len(commun)):
+        #print(len(commun[i]["Rentabilite"]))
         for j in range(len(commun[i]["Rentabilite"])):
             if commun[i]["Rentabilite"][j]>0:
-                classe.append(1) #bon investissement
+                liste_classe[i][j] = 1 #bon investissement
             else:
-                classe.append(0) #mauvais investissement
-        liste_classe.append(classe)
+                liste_classe[i][j] = 0 #mauvais investissement
+        #print(len(classe) 
+    #print(liste_classe)
+    #print(len(liste_classe))
+    #print(len(liste_classe[1]))
     return liste_classe
 
+# liste des classifieurs
+classifieurs = [LinearRegression,
+                SVR,
+                KNeighborsRegressor,
+                RandomForestRegressor
+    ]
+
+# prediction des classes
+def prediction():
+    class_initial = classement_initial()
+    commun = genere_tab_commun()
+    predictions = nd.zeros((len(classifieurs)))
+    for classifiers in classifieurs:
+        clf = classifiers()
+        clf.fit(commun, class_initial)
+        predictions[str(classifiers)] = clf.predict(commun)
+    print(predictions)
+    return
 
 if __name__ == "__main__":
     valider_paths()
@@ -155,4 +180,5 @@ if __name__ == "__main__":
     data_processing(None, training=True)
     genere_tab_commun()
     classement_initial()
+    prediction()
 
