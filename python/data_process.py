@@ -132,13 +132,16 @@ def classement_entrainement():
 
 # generation du tableau commun
 def genere_tab_commun():
-    commun = pd.DataFrame(columns={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
+    #commun = pd.DataFrame(columns={"Valeurs", "Gain", "Rendement", "Rentabilite"})
+    commun=[]
     for dataset in noms_dataset:
         donnees = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0)
+        #print(donnees)
         #commundf = pd.read_table(donnees, delim_whitespace=True,
         #                         names={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
-        commun.append(donnees, ignore_index=False)
-    print(commun)
+        #commun.append(donnees, ignore_index=False)
+        commun.append(donnees)
+    #print(commun[0]["Valeurs"][0])
     return
 
 
