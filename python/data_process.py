@@ -82,13 +82,13 @@ def telecharger_donnees(nom, code, training=False):
         for i in range(len(codes_dataset)):
             if not Path(RAW_DATA_PATH + noms_dataset[i] + ".csv").exists():
                 print("Téléchargement de " + RAW_DATA_PATH + noms_dataset[i])
-                data = quandl.get(codes_dataset[i])
+                data = quandl.get(codes_dataset[i], start_date=DATE_DEBUT, stop_date=DATE_FIN)
                 data.to_csv(Path(RAW_DATA_PATH + noms_dataset[i] + ".csv"))
         return
 
     if not Path(RAW_DATA_PATH + nom + ".csv").exists():
         print("Téléchargement de " + RAW_DATA_PATH + nom)
-        data = quandl.get(code)
+        data = quandl.get(code, start_date=DATE_DEBUT, stop_date=DATE_FIN)
         data.to_csv(Path(RAW_DATA_PATH + nom + ".csv"))
 
 
@@ -127,32 +127,31 @@ def data_processing(_datasets, training=False):
 def genere_tab_commun():
     #commun = pd.DataFrame(columns={"Valeurs", "Gain", "Rendement", "Rentabilite"})
     commun=[]
+    size = 0
+    s2 = 0
     for dataset in noms_dataset:
-        donnees = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0)
-        #print(donnees)
-        #commundf = pd.read_table(donnees, delim_whitespace=True,
-        #                         names={"Date", "Valeurs", "Gain", "Rendement", "Rentabilite"})
-        #commun.append(donnees, ignore_index=False)
+        donnees = pd.read_csv(Path(PROCESSED_DATA_PATH + dataset + "_processed.csv"), index_col=0).to_numpy()
         commun.append(donnees)
-    #print(commun[0]["Valeurs"][0])
-    return commun
+        size += donnees.shape[0]
+        s2 = donnees.shape[1]
+
+    retour = nd.ndarray((size, s2))
+    i = 0
+    for r in commun:
+        retour[i:i + r.shape[0]] = r
+        i = r.shape[0]
+    return retour
 
 # generation du classement initial
 def classement_initial():
     commun = genere_tab_commun()
     # classement initial
-    liste_classe = nd.ndarray((10, 1089))
+    liste_classe = []
     for i in range(len(commun)):
-        #print(len(commun[i]["Rentabilite"]))
-        for j in range(len(commun[i]["Rentabilite"])):
-            if commun[i]["Rentabilite"][j]>0:
-                liste_classe[i][j] = 1 #bon investissement
-            else:
-                liste_classe[i][j] = 0 #mauvais investissement
-        #print(len(classe) 
-    #print(liste_classe)
-    #print(len(liste_classe))
-    #print(len(liste_classe[1]))
+        if commun[i][3]>0:
+            liste_classe.append(1) #bon investissement
+        else:
+            liste_classe.append(0)#mauvais investissement
     return liste_classe
 
 
@@ -189,7 +188,7 @@ if __name__ == "__main__":
     valider_paths()
     telecharger_donnees(None, None, training=True)
     data_processing(None, training=True)
-    genere_tab_commun()
+    #genere_tab_commun()
     classement_initial()
-    prediction()
+    #prediction()
 

@@ -13,7 +13,7 @@ from sklearn.svm import SVR, SVC
 from sklearn.neighbors import NearestNeighbors, KNeighborsRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import scale
+from sklearn.preprocessing import minmax_scale
 
 train_sets = data_process.noms_dataset
 RAW_DATA_PATH = data_process.RAW_DATA_PATH
@@ -39,7 +39,7 @@ def optimize_lin(X, y):
 
 def optimize_SVR(X, y):
     kernels = ['linear', 'poly', 'rbf', 'sigmoid']
-    C = [0, 0.2, 0.4, 0.6, 0.8, 1]
+    C = [0.4, 0.8, 1.0, 1.2, 1.6, 2.0]
     epsilon = [0.0001, 0.001, 0.01, 0.1, 1]
     best_clf = SVR()
     best_clf.fit(X, y)
@@ -83,7 +83,7 @@ def optimize_kn(X, y):
 
 def optimize_rf(X, y):
     n_estimators = [50, 100, 150, 200]
-    max_features = range(X[0])
+    max_features = range(1, X.shape[1])
     best_clf = RandomForestRegressor()
     best_clf.fit(X, y)
     best_score = best_clf.score(X, y)
@@ -109,18 +109,15 @@ def optimisation_parametres():
     knDone = False
     rdFDone = False
 
-    data = pd.read_csv(Path(RAW_DATA_PATH + train_sets[0] + ".csv"), index_col=0).to_numpy()
-    targets = data_process.classement_initial()[0][:1090]
-    tt = floor(2*len(targets)/3)
-    X_train = data[:tt]
-    X_test = data[tt:]
-    y_train = targets[:tt]
-    y_test = targets[tt:]
+    data = data_process.genere_tab_commun()
+    targets = data_process.classement_initial()
+    scaled_data = minmax_scale(data, (-1, 1))
+    X_train, X_test, y_train, y_test = train_test_split(scaled_data, targets)
 
     if not linDone:
         lin, linParams = optimize_lin(X_train, y_train)
         pickle.dump(lin, open(Path("models/lin.sav"), 'wb'))
-        pd.DataFrame(linParams).to_csv("models/linparams.csv")
+        pd.DataFrame(linParams, index=linParams.keys()).to_csv("models/linparams.csv")
         lin_params = nd.array(linParams)
     else:
         lin = pickle.load(open(Path("models/lin.sav"), 'rb'))
@@ -129,7 +126,7 @@ def optimisation_parametres():
     if not SVRDone:
         svr, svr_params = optimize_SVR(X_train, y_train)
         pickle.dump(svr, open(Path("models/svr.sav"), 'wb'))
-        pd.DataFrame(svr_params).to_csv("models/svrparams.csv")
+        pd.DataFrame(svr_params, index=svr_params.keys()).to_csv("models/svrparams.csv")
         svr_params = nd.array(svr_params)
     else:
         svr = pickle.load(open(Path("models/svr.sav"), 'rb'))
@@ -138,7 +135,7 @@ def optimisation_parametres():
     if not knDone:
         kn, kn_params = optimize_kn(X_train, y_train)
         pickle.dump(kn, open(Path("models/kn.sav"), 'wb'))
-        pd.DataFrame(kn_params).to_csv("models/knparams.csv")
+        pd.DataFrame(kn_params, index=kn_params.keys()).to_csv("models/knparams.csv")
         kn_params = nd.array(kn_params)
     else:
         kn = pickle.load(open(Path("models/kn.sav"), 'rb'))
@@ -147,7 +144,7 @@ def optimisation_parametres():
     if not rdFDone:
         rf, rf_params = optimize_rf(X_train, y_train)
         pickle.dump(rf, open(Path("models/rf.sav"), 'wb'))
-        pd.DataFrame(rf_params).to_csv("models/rfparams.csv")
+        pd.DataFrame(rf_params, index=rf_params.keys()).to_csv("models/rfparams.csv")
         rf_params = nd.array(rf_params)
     else:
         rf = pickle.load(open(Path("models/rf.sav"), 'rb'))
