@@ -142,12 +142,26 @@ def genere_tab_commun():
         #commun.append(donnees, ignore_index=False)
         commun.append(donnees)
     #print(commun[0]["Valeurs"][0])
-    return
+    return commun
+
+
 
 
 if __name__ == "__main__":
     valider_paths()
     telecharger_donnees(None, None, training=True)
     data_processing(None, training=True)
-    genere_tab_commun()
+    commun = genere_tab_commun()
+    # classement initial
+    classe = []
+    liste_classe = []
+    for i in range(len(commun)):
+        for j in range(len(commun[i]["Rentabilite"])):
+            if commun[i]["Rentabilite"][j]>0:
+                classe.append(1) #bon investissement
+            else:
+                classe.append(0) #mauvais investissement
+        liste_classe.append(classe)
+    #print(liste_classe)
+    #print(len(liste_classe))
 
