@@ -155,15 +155,15 @@ def classement_initial():
     #print(len(liste_classe[1]))
     return liste_classe
 
-# liste des classifieurs
-classifieurs = [LinearRegression,
-                SVR,
-                KNeighborsRegressor,
-                RandomForestRegressor
-    ]
 
 # prediction des classes
 def prediction():
+    # liste des classifieurs
+    classifieurs = [LinearRegression,
+                SVR,
+                KNeighborsRegressor,
+                RandomForestRegressor
+        ]
     class_initial = classement_initial()
     commun = genere_tab_commun()
     rentabilite = nd.ndarray((10, 1089))
@@ -172,15 +172,17 @@ def prediction():
     #print(rentabilite)
     #predictions = nd.zeros((len(classifieurs)))
     predictions = nd.ndarray((10, 1089))
+    classif = []
     for classifiers in classifieurs:
         for i in range(len(rentabilite)):
-            clf = SVR()
+            clf = classifiers()
             clf.fit(rentabilite[i].reshape(-1,1), class_initial[i])
             #predictions[i] = clf.predict(rentabilite[i].reshape(-1,1))
             predictions[i] = clf.predict(class_initial[i].reshape(-1, 1))
+        classif.append(predictions)
     print("classement initial: {}".format(class_initial))
-    #print("rentabilite : {}".format(rentabilite))
-    print("prediction : {}".format(predictions))
+    print("rentabilite : {}".format(rentabilite))
+    print("prediction : {}".format(classif))
     return
 
 if __name__ == "__main__":
