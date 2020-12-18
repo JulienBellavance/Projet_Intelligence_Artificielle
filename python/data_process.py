@@ -159,7 +159,8 @@ def classement_initial():
         liste_classe.append(classe)
     #print(liste_classe)
     #print(len(liste_classe))
-    return
+    #print(len(liste_classe[1]))
+    return liste_classe
 
 
 if __name__ == "__main__":
