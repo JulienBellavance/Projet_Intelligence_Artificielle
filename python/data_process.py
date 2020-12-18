@@ -7,6 +7,10 @@ import quandl
 import os
 from pathlib import Path
 import fnmatch
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegression
+from sklearn.ensemble import RandomForestRegressor
 
 
 DATE_DEBUT = "2017-12-31"
@@ -161,6 +165,13 @@ def classement_initial():
     #print(len(liste_classe))
     #print(len(liste_classe[1]))
     return liste_classe
+
+# liste des classifieurs
+classifieurs = [LinearRegression,
+                SVR,
+                KNeighborsRegression,
+                RandomForestRegressor
+    ]
 
 
 if __name__ == "__main__":
