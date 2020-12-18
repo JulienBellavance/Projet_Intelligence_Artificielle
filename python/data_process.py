@@ -173,6 +173,18 @@ classifieurs = [LinearRegression,
                 RandomForestRegressor
     ]
 
+# prediction des classes
+def prediction():
+    class_initial = classement_initial()
+    commun = genere_tab_commun()
+    predictions = nd.zeros((len(classifieurs)))
+    for classifiers in classifieurs:
+        clf = classifiers()
+        clf.fit(commun, class_initial)
+        predictions[str(classifiers)] = clf.predict(commun)
+    print(predictions)
+    return
+
 
 if __name__ == "__main__":
     valider_paths()
